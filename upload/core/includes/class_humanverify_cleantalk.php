@@ -5,8 +5,9 @@ if (!class_exists('vB_HumanVerify_Abstract')){
 
 class vB_HumanVerify_CleanTalk extends vB_HumanVerify_Abstract {
 
-    function __construct(&$registry) {
-	parent::__construct($registry);
+    function __construct(&$registry = null) {
+        if ($registry)
+	       parent::__construct($registry);
     }
 
     function get_data(){

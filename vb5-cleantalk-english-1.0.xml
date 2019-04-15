@@ -3,14 +3,14 @@
 <product productid="cleantalk" active="1">
 	<title>Anti-spam by CleanTalk</title>
 	<description>No Captcha, no questions, no counting animals, no puzzles, no math.</description>
-	<version>1.0</version>
+	<version>1.1</version>
 	<url>https://cleantalk.org/vbulletin</url>
 	<versioncheckurl />
 	<dependencies>
-		<dependency dependencytype="vbulletin" minversion="5.0.2" maxversion="5.3.0" />
+		<dependency dependencytype="vbulletin" minversion="5.0.2" maxversion="5.5.2" />
 	</dependencies>
 	<codes>
-		<code version="1.0">
+		<code version="1.1">
 			<installcode><![CDATA[
 $vbulletin->db->query_write("DROP TABLE IF EXISTS  " . TABLE_PREFIX . "ct_config");
 $vbulletin->db->query_write("DROP TABLE IF EXISTS  " . TABLE_PREFIX . "cleantalk_timelabels");
