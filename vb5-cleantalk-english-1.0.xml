@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<product productid="cleantalk" active="1">
+	<title>Anti-spam by CleanTalk</title>
+	<description>No Captcha, no questions, no counting animals, no puzzles, no math.</description>
+	<version>1.0</version>
+	<url>https://cleantalk.org/vbulletin</url>
+	<versioncheckurl />
+	<dependencies>
+		<dependency dependencytype="vbulletin" minversion="5.0.2" maxversion="5.3.0" />
+	</dependencies>
+	<codes>
+		<code version="1.0">
+			<installcode><![CDATA[
+$vbulletin->db->query_write("DROP TABLE IF EXISTS  " . TABLE_PREFIX . "ct_config");
+$vbulletin->db->query_write("DROP TABLE IF EXISTS  " . TABLE_PREFIX . "cleantalk_timelabels");
+$vbulletin->db->query_write("DROP TABLE IF EXISTS  " . TABLE_PREFIX . "cleantalk_server");
+$vbulletin->db->query_write("DROP TABLE IF EXISTS  " . TABLE_PREFIX . "cleantalk_php_code");
+
+$vbulletin->db->query_write("CREATE TABLE " . TABLE_PREFIX . "cleantalk_timelabels (ct_key varchar(64), ct_value int(11), PRIMARY KEY (ct_key))");
+$vbulletin->db->query_write("CREATE TABLE " . TABLE_PREFIX . "cleantalk_server (work_url varchar(255), server_url varchar(255), server_ttl int(11), server_changed int(11))");
+
+$ct_phrases = $vbulletin->db->query_read("SELECT * FROM " . TABLE_PREFIX . "phrase WHERE varname = 'vb3_posting' AND fieldname = 'faqtext' AND languageid = -1");
+$ct_text = '<p>In order to protect the forum from spam your Email, Nickname, IP address, and the message can be sent to the servers anti-spam service <a href="http://cleantalk.org">CleanTalk</a>.</p>';
+while ($ct_phrase = $vbulletin->db->fetch_array($ct_phrases)) {
+    $vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "phrase SET `text` = '" . $vbulletin->db->escape_string($ct_phrase['text'] . $ct_text) . "' WHERE phraseid='" . $ct_phrase['phraseid'] . "'");
+}
+
+$ct_text = "\nCleanTalk|CleanTalk";
+$vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "setting set optioncode = CONCAT(optioncode, '$ct_text') where varname = 'hv_type'");
+
+$ct_text = '<div style="font-weight:bold; margin-top:1em"><a href="https://cleantalk.org" target="_blank">CleanTalk</a></div><div>No Captcha, no questions, no counting animals, no puzzles, no math.<br>Get access key on <a href="https://cleantalk.org" target="_blank">CleanTalk.Org</a></div>';
+$vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "phrase set text = CONCAT(text ,'\n" . $ct_text ."\n') where varname='setting_hv_type_desc'");
+
+$ct_text = 'if ($showHv && vB_Template_Runtime::parseData("hv","fetchHvType") == "CleanTalk") $final_rendered .= vB_Template_Runtime::parseData("hvcleantalk", "fetchHvcleantalk");';
+$vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "template set template = CONCAT(template, '\n" . $ct_text . "\n' ) where title='humanverify'" );
+
+]]></installcode>
+			<uninstallcode><![CDATA[
+$ct_dbrows = $vbulletin->db->query_read("SELECT * FROM " . TABLE_PREFIX . "phrase WHERE varname = 'vb3_posting' AND fieldname = 'faqtext' AND languageid = -1 AND text like '%CleanTalk%'");
+$ct_text = '<p>In order to protect the forum from spam your Email, Nickname, IP address, and the message can be sent to the servers anti-spam service <a href="http://cleantalk.org">CleanTalk</a>.</p>';
+while ($ct_dbrow = $vbulletin->db->fetch_array($ct_dbrows)) {
+    $vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "phrase SET text = '" . $vbulletin->db->escape_string(str_replace($ct_text, '', $ct_dbrow['text'])) . "' WHERE phraseid = " . $ct_dbrow['phraseid']);
+}
+
+$ct_dbrows = $vbulletin->db->query_read("SELECT optioncode FROM " . TABLE_PREFIX . "setting WHERE varname = 'hv_type' and optioncode like '%CleanTalk%'");
+$ct_text = "\nCleanTalk|CleanTalk";
+while ($ct_dbrow = $vbulletin->db->fetch_array($ct_dbrows)) {
+    $vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "setting SET optioncode = '" . $vbulletin->db->escape_string(str_replace($ct_text, '', $ct_dbrow['optioncode'])) . "' WHERE varname = 'hv_type'");
+}
+
+$ct_dbrows = $vbulletin->db->query_read("SELECT * FROM " . TABLE_PREFIX . "phrase WHERE varname = 'setting_hv_type_desc' and text like '%CleanTalk%'");
+$ct_text = '<div style="font-weight:bold; margin-top:1em"><a href="https://cleantalk.org" target="_blank">CleanTalk</a></div><div>No Captcha, no questions, no counting animals, no puzzles, no math.<br>Get access key on <a href="https://cleantalk.org" target="_blank">CleanTalk.Org</a></div>';
+while ($ct_dbrow = $vbulletin->db->fetch_array($ct_dbrows)) {
+    $vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "phrase SET text = '" . $vbulletin->db->escape_string(str_replace($ct_text, '', $ct_dbrow['text'])) . "' WHERE phraseid = " . $ct_dbrow['phraseid']);
+}
+
+$ct_dbrows = $vbulletin->db->query_read("SELECT * FROM " . TABLE_PREFIX . "template WHERE title='humanverify' and template like '%cleantalk%'");
+$ct_text = 'if ($showHv && vB_Template_Runtime::parseData("hv","fetchHvType") == "CleanTalk") $final_rendered .= vB_Template_Runtime::parseData("hvcleantalk", "fetchHvcleantalk");';
+while ($ct_dbrow = $vbulletin->db->fetch_array($ct_dbrows)) {
+    $vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "template SET template = '" . $vbulletin->db->escape_string(str_replace($ct_text, '', $ct_dbrow['template'])) . "' WHERE templateid = " . $ct_dbrow['templateid']);
+}
+
+]]></uninstallcode>
+		</code>
+	</codes>
+	<templates>
+	</templates>
+	<stylevardfns>
+	</stylevardfns>
+	<stylevars>
+	</stylevars>
+	<plugins>
+	</plugins>
+	<phrases>
+		<phrasetype name="Error Messages" fieldname="error">
+			<phrase name="cleantalk_wrong" date="1165886086" username="admin" version="1.1"><![CDATA[Cleantalk wrong access]]></phrase>
+		</phrasetype>
+		<phrasetype name="vBulletin Settings" fieldname="vbsettings">
+			<phrase name="setting_cleantalk_key_desc" date="1156440504" username="admin" version="1.0"><![CDATA[<a target="__blank" href="https://cleantalk.org/vbulletin">Click to get the key</a>]]></phrase>
+			<phrase name="setting_cleantalk_key_title" date="1156440504" username="admin" version="1.0"><![CDATA[Key]]></phrase>
+			<phrase name="setting_cleantalk_register_onoff_desc" date="1156440504" username="admin" version="1.0"><![CDATA[If you would like to disable the registration check, please select No here.]]></phrase>
+			<phrase name="setting_cleantalk_register_onoff_title" date="1156440504" username="admin" version="1.0"><![CDATA[Enable registration check?]]></phrase>
+			<phrase name="setting_cleantalk_log_onoff_desc" date="1156440504" username="admin" version="1.2"><![CDATA[If you would like to disable logging, please select No here.]]></phrase>
+			<phrase name="setting_cleantalk_log_onoff_title" date="1156440504" username="admin" version="1.2"><![CDATA[Enable logging?]]></phrase>
+			<phrase name="setting_cleantalk_homepage_desc" date="1386770576" username="admin" version="1.0.2"><![CDATA[Feel free to contact us to ask any question]]></phrase>
+			<phrase name="setting_cleantalk_homepage_title" date="1386770576" username="admin" version="1.0.2"><![CDATA[Product homepage]]></phrase>
+			<phrase name="settinggroup_cleantalk" date="1156439888" username="admin" version="1.0"><![CDATA[Anti-spam by CleanTalk]]></phrase>
+		</phrasetype>
+	</phrases>
+	<options>
+		<settinggroup name="cleantalk" displayorder="6690">
+			<setting varname="cleantalk_key" displayorder="10">
+				<datatype>free</datatype>
+			</setting>
+			<setting varname="cleantalk_register_onoff" displayorder="20">
+				<datatype>boolean</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>1</defaultvalue>
+			</setting>
+			<setting varname="cleantalk_log_onoff" displayorder="30">
+				<datatype>boolean</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>1</defaultvalue>
+			</setting>
+			<setting varname="cleantalk_homepage" displayorder="40">
+				<datatype>free</datatype>
+				<optioncode><![CDATA[<div class=\"smallfont\"><a target=\"__blank\" href=\"https://cleantalk.org\">https://cleantalk.org</a></div>]]></optioncode>
+			</setting>
+		</settinggroup>
+	</options>
+	<helptopics>
+	</helptopics>
+	<cronentries>
+	</cronentries>
+	<faqentries>
+	</faqentries>
+	<navigation>
+	</navigation>
+</product>
