@@ -7,7 +7,7 @@
 	<url>https://cleantalk.org/vbulletin</url>
 	<versioncheckurl />
 	<dependencies>
-		<dependency dependencytype="vbulletin" minversion="5.0.2" maxversion="5.5.2" />
+		<dependency dependencytype="vbulletin" minversion="5.0.2" maxversion="5.5.5" />
 	</dependencies>
 	<codes>
 		<code version="1.1">
