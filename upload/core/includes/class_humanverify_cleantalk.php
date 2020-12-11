@@ -19,7 +19,7 @@ class vB_HumanVerify_CleanTalk extends vB_HumanVerify_Abstract {
 
         if ( isset($vbulletin->scriptpath) ) {
             $s2 = substr($vbulletin->scriptpath, 0, 26);
-            if ($s2 != '/registration/registration') return true;
+            if (strpos($vbulletin->scriptpath, '/registration/registration') === false) return true;
         } else {
             return true;
         }
