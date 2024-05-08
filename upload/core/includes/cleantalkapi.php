@@ -251,14 +251,17 @@ setTimeout("document.getElementById(\"ct_checkjs\").value = document.getElementB
 			);
     		    }
 
-		    $ct_admin_users = $vbulletin->db->query_read("SELECT * FROM " . TABLE_PREFIX . "user WHERE usergroupid=6");
-		    while ($ct_admin_user = $vbulletin->db->fetch_array($ct_admin_users)) {
-			vbmail($ct_admin_user['email'],  $err_title, $err_str. "\nHost ".$_SERVER['SERVER_NAME']."\nTime ".date('Y-m-d H:i:s')."\n".var_export($ct_request, TRUE));
-		    }
+                        $ct_admin_users = $vbulletin->db->query_read("SELECT * FROM " . TABLE_PREFIX . "user WHERE usergroupid=6");
+                        if ( function_exists('vbmail') ) {
+                            while ( $ct_admin_user = $vbulletin->db->fetch_array($ct_admin_users) ) {
+                                vbmail($ct_admin_user['email'], $err_title, $err_str . "\nHost " . $_SERVER['SERVER_NAME'] . "\nTime " . date('Y-m-d H:i:s') . "\n" . var_export($ct_request, TRUE));
+                            }
+                        }
+
+                    }
                 }
+                return $ret_val;
             }
-            return $ret_val;
-        }
 
         $ret_val['errno'] = 0;
         if ($ct_result->allow == 1) {
