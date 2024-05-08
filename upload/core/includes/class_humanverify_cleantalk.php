@@ -34,7 +34,13 @@ class vB_HumanVerify_CleanTalk extends vB_HumanVerify_Abstract {
         if ( !class_exists('CleantalkAPI') ) {
             include_once(dirname(__FILE__).'/cleantalkapi.php');
         }
-        $aResult = CleantalkAPI::CheckSpam($aUser, TRUE); // Send email too
+        try {
+            $aResult = CleantalkAPI::CheckSpam($aUser, TRUE); // Send email too
+        } catch (\Exception $e) {
+            file_put_contents('cleantalk-error.log',time() . ': ERROR: [' . __FUNCTION__ . '] []: ' . var_export('CheckSpam Fatal Error',true), FILE_APPEND);
+
+            return true;
+        }
 
         if (isset($aResult) && is_array($aResult)) {
             if ($aResult['errno'] == 0) {

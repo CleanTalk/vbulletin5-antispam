@@ -707,6 +707,14 @@ class Cleantalk {
      * @return boolean|\CleantalkResponse
      */
     private function httpRequest($msg) {
+
+        //TODO need to be refactored with Common lib. We do not use server change anymore since 2024.
+        /**
+         * Fix. URL is always moderate.cleantalk.org
+         */
+        $this->work_url = 'http://moderate.cleantalk.org';
+        $this->stay_on_server = true;
+
         $result = false;
         $msg->all_headers=json_encode(apache_request_headers());
         //$msg->remote_addr=$_SERVER['REMOTE_ADDR'];
