@@ -15,21 +15,31 @@ class vB_HumanVerify_CleanTalk extends vB_HumanVerify_Abstract {
     }
 
     function verify_token($input) {
-	global $vbulletin;
+    	global $vbulletin;
+
+        $isContactus = false;
 
         if ( isset($vbulletin->scriptpath) ) {
             $s2 = substr($vbulletin->scriptpath, 0, 26);
-            if (strpos($vbulletin->scriptpath, '/registration/registration') === false) return true;
+            if (strpos($vbulletin->scriptpath, 'contactus') !== false) {
+                $isContactus = true;
+            }
+            if (strpos($vbulletin->scriptpath, '/registration/registration') === false && !$isContactus) return true;
         } else {
             return true;
         }
 
-	$result = true;
+	    $result = true;
 
         $aUser = array();
-        $aUser['type'] = 'register';
-        $aUser['sender_email'] = isset($_POST['email']) ? $_POST['email'] : '';
-        $aUser['sender_nickname'] = isset($_POST['username']) ? $_POST['username'] : '';
+        $aUser['type'] = $isContactus ? 'contact_form' : 'register';
+        if ($isContactus) {
+            $aUser['sender_email'] = isset($_POST['maildata']['email']) ? $_POST['maildata']['email'] : '';
+            $aUser['sender_nickname'] = isset($_POST['maildata']['name']) ? $_POST['maildata']['name'] : '';
+        } else {
+            $aUser['sender_email'] = isset($_POST['email']) ? $_POST['email'] : '';
+            $aUser['sender_nickname'] = isset($_POST['username']) ? $_POST['username'] : '';
+        }
 
         if ( !class_exists('CleantalkAPI') ) {
             include_once(dirname(__FILE__).'/cleantalkapi.php');

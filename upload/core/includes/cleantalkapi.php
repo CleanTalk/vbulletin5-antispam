@@ -190,6 +190,10 @@ setTimeout("document.getElementById(\"ct_checkjs\").value = document.getElementB
                     $ct_request->submit_time = $ct_submit_time;
                     $ct_request->tz = isset($arEntity['user_timezone']) ? $arEntity['user_timezone'] : NULL;
                     $ct_result = $ct->isAllowUser($ct_request);
+                    break;
+                case 'contact_form':
+                    $ct_result = $ct->isAllowMessage($ct_request);
+                    break;
             }
 
             $ret_val = array();
