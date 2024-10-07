@@ -21,7 +21,7 @@ $vbulletin->db->query_write("CREATE TABLE " . TABLE_PREFIX . "cleantalk_timelabe
 $vbulletin->db->query_write("CREATE TABLE " . TABLE_PREFIX . "cleantalk_server (work_url varchar(255), server_url varchar(255), server_ttl int(11), server_changed int(11))");
 
 $ct_phrases = $vbulletin->db->query_read("SELECT * FROM " . TABLE_PREFIX . "phrase WHERE varname = 'vb3_posting' AND fieldname = 'faqtext' AND languageid = -1");
-$ct_text = '<p>In order to protect the forum from spam your Email, Nickname, IP address, and the message can be sent to the servers anti-spam service <a href="http://cleantalk.org">CleanTalk</a>.</p>';
+$ct_text = '<p>In order to protect the forum from spam your Email, Nickname, IP address, and the message can be sent to the servers anti-spam service <a href="https://cleantalk.org">CleanTalk</a>.</p>';
 while ($ct_phrase = $vbulletin->db->fetch_array($ct_phrases)) {
     $vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "phrase SET `text` = '" . $vbulletin->db->escape_string($ct_phrase['text'] . $ct_text) . "' WHERE phraseid='" . $ct_phrase['phraseid'] . "'");
 }
@@ -38,7 +38,7 @@ $vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "template set template = 
 ]]></installcode>
 			<uninstallcode><![CDATA[
 $ct_dbrows = $vbulletin->db->query_read("SELECT * FROM " . TABLE_PREFIX . "phrase WHERE varname = 'vb3_posting' AND fieldname = 'faqtext' AND languageid = -1 AND text like '%CleanTalk%'");
-$ct_text = '<p>In order to protect the forum from spam your Email, Nickname, IP address, and the message can be sent to the servers anti-spam service <a href="http://cleantalk.org">CleanTalk</a>.</p>';
+$ct_text = '<p>In order to protect the forum from spam your Email, Nickname, IP address, and the message can be sent to the servers anti-spam service <a href="https://cleantalk.org">CleanTalk</a>.</p>';
 while ($ct_dbrow = $vbulletin->db->fetch_array($ct_dbrows)) {
     $vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "phrase SET text = '" . $vbulletin->db->escape_string(str_replace($ct_text, '', $ct_dbrow['text'])) . "' WHERE phraseid = " . $ct_dbrow['phraseid']);
 }

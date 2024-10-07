@@ -299,8 +299,8 @@ setTimeout("document.getElementById(\"ct_checkjs\").value = document.getElementB
             );
         else
             return array(
-                'work_url' => 'http://moderate.cleantalk.ru',
-                'server_url' => 'http://moderate.cleantalk.ru',
+                'work_url' => 'https://moderate.cleantalk.org',
+                'server_url' => 'https://moderate.cleantalk.org',
                 'server_ttl' => 0,
                 'server_changed' => 0,
             );
@@ -309,7 +309,7 @@ setTimeout("document.getElementById(\"ct_checkjs\").value = document.getElementB
     /**
      * CleanTalk inner function - sets working server.
      */
-    private static function SetWorkServer($work_url = 'http://moderate.cleantalk.ru', $server_url = 'http://moderate.cleantalk.ru', $server_ttl = 0, $server_changed = 0) {
+    private static function SetWorkServer($work_url = 'https://moderate.cleantalk.org', $server_url = 'https://moderate.cleantalk.org', $server_ttl = 0, $server_changed = 0) {
         global $vbulletin;
         $result = $vbulletin->db->query_first('SELECT count(*) AS count FROM ' . TABLE_PREFIX . 'cleantalk_server');
         $count = $result['count'];
