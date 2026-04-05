@@ -1,4 +1,7 @@
 # vbulletin5-antispam
+
+If you find this project useful, please consider starring ⭐ it on GitHub — it helps us grow and support development!
+
 ## Version 1.1
 Anti-spam hook for vBulletin 5.X.
 
